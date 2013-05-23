@@ -1,0 +1,30 @@
+#ifndef MG_OSG_MESSAGE_H
+#define MG_OSG_MESSAGE_H
+
+namespace mg {
+
+class Engine;
+
+/*
+ * Message sent to the OSG thread.
+ */
+class OSGMessage {
+    friend class OSGMailbox;
+public:
+    OSGMessage();
+
+    /* Override by ancestors to implement
+     * delivery logic (executed in the context
+     * of OSG thread). */
+    virtual void deliver(Engine *engine) = 0;
+
+    /* Send the message to OSG thread */
+    void send();
+
+protected:
+    virtual ~OSGMessage();
+};
+
+}
+
+#endif

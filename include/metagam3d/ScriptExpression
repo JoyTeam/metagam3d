@@ -1,0 +1,139 @@
+#ifndef MG_SCRIPT_EXPRESSION_H
+#define MG_SCRIPT_EXPRESSION_H
+
+#include <metagam3d/Variant>
+#include <osg/Referenced>
+#include <osg/ref_ptr>
+#include <vector>
+
+namespace mg {
+
+class ScriptEnvironment;
+
+/*
+ * Script expression is a syntax tree that can be efficiently
+ * evaluated in real time.
+ *
+ * ScriptExpression reference counter is locked with mutex, so it's safe
+ * to use the same object from any thread.
+ */
+class ScriptExpression: public osg::Referenced {
+public:
+    ScriptExpression();
+
+    /* Evaluate expression */
+    virtual Variant evaluate(const ScriptEnvironment &env) const = 0;
+
+protected:
+    virtual ~ScriptExpression();
+};
+
+/*
+ * Unary mathematical expressions like "-"
+ */
+class ScriptUnaryExpression: public ScriptExpression {
+public:
+    enum Type {
+        MINUS,
+        NOT
+    };
+    /*
+     * Expression argument is destroyed automatically when
+     * the expression itself is destroyed.
+     */
+    ScriptUnaryExpression(Type type, ScriptExpression *arg1);
+    virtual ~ScriptUnaryExpression();
+    virtual Variant evaluate(const ScriptEnvironment &env) const;
+
+protected:
+    Type m_type;
+    osg::ref_ptr<ScriptExpression> m_arg1;
+};
+
+/*
+ * Binary mathematical expressions like "+", "-", "*", "/"
+ */
+class ScriptBinaryExpression: public ScriptExpression {
+public:
+    enum Type {
+        PLUS,
+        MINUS,
+        MULT,
+        DIV,
+        EQUAL,
+        NOTEQUAL,
+        LT,
+        LE,
+        GT,
+        GE,
+        AND,
+        OR,
+        MOD
+    };
+    /*
+     * Expression arguments are destroyed automatically when
+     * the expression itself is destroyed.
+     */
+    ScriptBinaryExpression(Type type, ScriptExpression *arg1, ScriptExpression *arg2);
+    virtual ~ScriptBinaryExpression();
+    virtual Variant evaluate(const ScriptEnvironment &env) const;
+
+protected:
+    Type m_type;
+    osg::ref_ptr<ScriptExpression> m_arg1;
+    osg::ref_ptr<ScriptExpression> m_arg2;
+};
+
+/*
+ * Ternary mathematical expressions like "?"
+ */
+class ScriptTernaryExpression: public ScriptExpression {
+public:
+    enum Type {
+        QUESTION
+    };
+    /*
+     * Expression arguments are destroyed automatically when
+     * the expression itself is destroyed.
+     */
+    ScriptTernaryExpression(Type type, ScriptExpression *arg1, ScriptExpression *arg2,
+        ScriptExpression *arg3);
+    virtual ~ScriptTernaryExpression();
+    virtual Variant evaluate(const ScriptEnvironment &env) const;
+
+protected:
+    Type m_type;
+    osg::ref_ptr<ScriptExpression> m_arg1;
+    osg::ref_ptr<ScriptExpression> m_arg2;
+    osg::ref_ptr<ScriptExpression> m_arg3;
+};
+
+/*
+ * Expression returning the constant value
+ */
+class ScriptConstExpression: public ScriptExpression {
+public:
+    ScriptConstExpression(const Variant &val);
+    virtual ~ScriptConstExpression();
+    virtual Variant evaluate(const ScriptEnvironment &env) const;
+
+protected:
+    Variant m_val;
+};
+
+/*
+ * Expression returning value of the global variable
+ */
+class ScriptGlobExpression: public ScriptExpression {
+public:
+    ScriptGlobExpression(const std::string &name);
+    virtual ~ScriptGlobExpression();
+    virtual Variant evaluate(const ScriptEnvironment &env) const;
+
+protected:
+    std::string m_name;
+};
+
+} // namespace mg
+
+#endif

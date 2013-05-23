@@ -1,0 +1,16 @@
+#ifndef MG_ERRORS_H
+#define MG_ERRORS_H
+
+#include <stdexcept>
+#include <string>
+
+namespace mg {
+
+class os_error: public std::runtime_error {
+public:
+    os_error(const std::string &operation);
+};
+
+} // namespace mg
+
+#endif

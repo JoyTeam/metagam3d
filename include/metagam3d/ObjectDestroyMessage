@@ -1,0 +1,27 @@
+#ifndef MG_OBJECT_DESTROY_MESSAGE_H
+#define MG_OBJECT_DESTROY_MESSAGE_H
+
+#include <metagam3d/types>
+#include <metagam3d/OSGMessage>
+#include <map>
+
+namespace mg {
+
+/*
+ * This message is sent to OSG thread to destroy the object.
+ */
+class ObjectDestroyMessage: public OSGMessage {
+public:
+    ObjectDestroyMessage(ObjectId objid);
+
+protected:
+    virtual ~ObjectDestroyMessage();
+    virtual void deliver(Engine *engine);
+
+    /* Object identifier */
+    ObjectId m_objid;
+};
+
+}
+
+#endif

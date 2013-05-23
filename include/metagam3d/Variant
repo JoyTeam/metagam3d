@@ -1,0 +1,108 @@
+#ifndef MG_VARIANT_H
+#define MG_VARIANT_H
+
+#include <osg/Vec3d>
+#include <string>
+
+namespace mg {
+
+/*
+ * Variant is either a scalar value (number, string), or vector,
+ * or empty (None) value.
+ */
+class Variant {
+public:
+    enum Type {
+        NONE,
+        INTEGER,
+        DOUBLE,
+        VEC3D,
+        STRING
+    };
+
+    Variant();
+    explicit Variant(short val);
+    explicit Variant(int val);
+    explicit Variant(long val);
+    explicit Variant(float val);
+    explicit Variant(double val);
+    Variant(const osg::Vec3d &val);
+    Variant(const std::string &val);
+    Variant(const Variant &var);
+    ~Variant();
+
+    /* Get value type */
+    inline Type type() const;
+
+    /* Get actual values */
+    long integerValue() const;
+    double doubleValue() const;
+    osg::Vec3d vec3dValue() const;
+    std::string stringValue() const;
+
+    /* Assignment */
+    Variant &operator=(const Variant &rhs);
+
+    /* Arithmetics */
+    Variant &operator+=(const Variant &rhs);
+    Variant &operator-=(const Variant &rhs);
+    Variant &operator*=(const Variant &rhs);
+    Variant &operator/=(const Variant &rhs);
+    Variant &operator%=(const Variant &rhs);
+    Variant operator+(const Variant &rhs) const;
+    Variant operator-(const Variant &rhs) const;
+    Variant operator*(const Variant &rhs) const;
+    Variant operator/(const Variant &rhs) const;
+    Variant operator%(const Variant &rhs) const;
+    Variant operator-() const;
+
+    /* Comparsion */
+    bool operator==(const Variant &rhs) const;
+    bool operator!=(const Variant &rhs) const;
+    bool operator>(const Variant &rhs) const;
+    bool operator>=(const Variant &rhs) const;
+    bool operator<(const Variant &rhs) const;
+    bool operator<=(const Variant &rhs) const;
+
+    /* Conversion to bool */
+    operator bool() const;
+
+    /* Comparsion helper. Returns: -1 if this < var, 0 if this == var,
+     * 1 if this > var. */
+    int compare(const Variant &var) const;
+
+protected:
+
+    /* Value type */
+    Type m_type;
+
+    /* Values */
+    long m_integerValue;
+    double m_doubleValue;
+    osg::Vec3d m_vec3dValue;
+    std::string m_stringValue;
+
+    /* Assignment helper */
+    void copy(const Variant &rhs);
+
+    /* Check whether types can be considered equal for == */
+    inline bool compatibleType(const Variant &var) const;
+};
+
+inline Variant::Type Variant::type() const
+{
+    return m_type;
+}
+
+inline bool Variant::compatibleType(const Variant &var) const
+{
+    if ((m_type == INTEGER || m_type == DOUBLE) &&
+            (var.m_type == INTEGER || var.m_type == DOUBLE)) {
+        return true;
+    }
+    return m_type == var.m_type;
+}
+
+}
+
+#endif

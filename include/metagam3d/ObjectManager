@@ -1,0 +1,43 @@
+#ifndef MG_OBJECT_MANAGER_H
+#define MG_OBJECT_MANAGER_H
+
+#include <metagam3d/types>
+#include <osg/Referenced>
+#include <osg/ref_ptr>
+#include <map>
+
+namespace mg {
+
+class Object;
+
+typedef std::map<ObjectId, osg::ref_ptr<Object> > ObjectMap;
+
+/*
+ * Object Manager keeps list of all Objects in data structure
+ * optimized for fast search by id.
+ *
+ * Objects of this class should be used from OSG thread only.
+ */
+class ObjectManager: public osg::Referenced {
+public:
+    ObjectManager();
+
+    /* Add new object to the list of objects */
+    void add(Object *obj);
+
+    /* Delete object from the list of objects */
+    void remove(ObjectId objId);
+
+    /* Find object by its identifier */
+    Object *find(ObjectId objId);
+
+protected:
+    virtual ~ObjectManager();
+
+    /* Map identifier => object */
+    ObjectMap m_objects;
+};
+
+}
+
+#endif

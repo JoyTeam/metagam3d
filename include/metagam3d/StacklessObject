@@ -1,0 +1,31 @@
+#ifndef MG_STACKLESS_OBJECT_H
+#define MG_STACKLESS_OBJECT_H
+
+#include <metagam3d/types>
+
+namespace mg {
+
+/*
+ * StacklessObject is the Stackless-side representation of
+ * an Object. It provides interface to sending requests to the
+ * object and receiving responses from it.
+ */
+class StacklessObject {
+public:
+    StacklessObject(ObjectId id);
+    ~StacklessObject();
+
+    /* Get object identifier */
+    ObjectId id() const;
+
+    /* Destroy the object */
+    void destroy();
+
+protected:
+    /* Object identifier */
+    ObjectId m_id;
+};
+
+} // namespace mg
+
+#endif

@@ -1,0 +1,28 @@
+#ifndef MG_RUN_SCRIPT_COMMAND_H
+#define MG_RUN_SCRIPT_COMMAND_H
+
+#include <metagam3d/StacklessMessage>
+#include <string>
+
+namespace mg {
+
+/*
+ * StacklessObject is the Stackless-side representation of
+ * an Object. It provides interface to sending requests to the
+ * object and receiving responses from it.
+ */
+class RunScriptCommand: public StacklessMessage {
+public:
+    RunScriptCommand(const std::string &filename);
+
+protected:
+    virtual ~RunScriptCommand();
+    virtual void deliver();
+
+private:
+    std::string m_filename;
+};
+
+} // namespace mg
+
+#endif

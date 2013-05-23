@@ -1,0 +1,87 @@
+#ifndef MG_ENGINE_H
+#define MG_ENGINE_H
+
+#include <osg/ref_ptr>
+#include <metagam3d/StacklessThread>
+
+namespace osg {
+    class Group;
+}
+
+namespace osgViewer {
+    class Viewer;
+}
+
+namespace mg {
+
+class ObjectManager;
+class Camera;
+class CameraManipulator;
+
+class Engine {
+    friend class EngineUpdater;
+public:
+    Engine(int argc, char **argv);
+    ~Engine();
+
+    /* Install StatsHandler that shows render performance
+     * on 's' keypress. */
+    void installStatsHandler();
+
+    /* Run engine */
+    int run();
+
+    /* Get scene reference */
+    inline osg::Group *scene();
+
+    /* Get object manager reference */
+    inline ObjectManager *objectManager();
+
+    /* Get current model time */
+    inline double time() const;
+
+    /* Get camera manipulator reference */
+    inline CameraManipulator *cameraManipulator();
+
+    /* Get last created engine instance */
+    static Engine *instance();
+
+protected:
+
+    double m_time;
+    osg::ref_ptr<osgViewer::Viewer> m_viewer;
+    osg::ref_ptr<osg::Group> m_scene;
+    osg::ref_ptr<ObjectManager> m_objectManager;
+    osg::ref_ptr<CameraManipulator> m_cameraManipulator;
+    StacklessThread m_stackless;
+    bool m_initialized;
+
+    /* Update engine state */
+    void update(double time);
+
+    static Engine *m_engineInstance;
+};
+
+inline osg::Group *Engine::scene()
+{
+    return m_scene;
+}
+
+inline ObjectManager *Engine::objectManager()
+{
+    return m_objectManager;
+}
+
+inline double Engine::time() const
+{
+    return m_time;
+}
+
+inline CameraManipulator *Engine::cameraManipulator()
+{
+    return m_cameraManipulator;
+}
+
+} // namespace mg
+
+#endif

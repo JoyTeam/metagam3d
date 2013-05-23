@@ -1,0 +1,48 @@
+#ifndef MG_STACKLESS_MAILBOX_H
+#define MG_STACKLESS_MAILBOX_H
+
+#include <OpenThreads/Mutex>
+#include <list>
+
+namespace mg {
+
+class StacklessMessage;
+
+/*
+ * Mailbox for messages to the Stackless thread
+ */
+class StacklessMailbox {
+public:
+    /* Get pipe file descriptor (stackless side) used for signalling */
+    int readFD();
+
+    /* Enqueue message for stackless */
+    void send(StacklessMessage *msg);
+
+    /* Process messages queue */
+    void process();
+
+    /* Get singleton instance */
+    static StacklessMailbox *instance();
+
+private:
+    StacklessMailbox();
+    ~StacklessMailbox();
+
+    /* File descriptor of pipe used for libevent wakeup */
+    int fd[2];
+
+    /* Queue */
+    OpenThreads::Mutex mutex;
+    std::list<StacklessMessage*> queue;
+
+    /* Wake up Stackless side */
+    void wakeupSend();
+
+    /* Acknowledge reception of wakeup */
+    void wakeupAck();
+};
+
+} // namespace mg
+
+#endif

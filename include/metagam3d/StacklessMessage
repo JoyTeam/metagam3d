@@ -1,0 +1,28 @@
+#ifndef MG_STACKLESS_MESSAGE_H
+#define MG_STACKLESS_MESSAGE_H
+
+namespace mg {
+
+/*
+ * Message sent to the Stackless thread.
+ */
+class StacklessMessage {
+    friend class StacklessMailbox;
+public:
+    StacklessMessage();
+
+    /* Send the message to the Stackless thread */
+    void send();
+
+protected:
+    virtual ~StacklessMessage();
+
+    /* Override by ancestors to implement
+     * delivery logic (executed in the context
+     * of the Stackless thread). */
+    virtual void deliver() = 0;
+};
+
+} // namespace mg
+
+#endif

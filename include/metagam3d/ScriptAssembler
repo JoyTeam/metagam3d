@@ -1,0 +1,116 @@
+#ifndef MG_SCRIPT_ASSEMBLER
+#define MG_SCRIPT_ASSEMBLED
+
+#include <metagam3d/ScriptExpression>
+#include <vector>
+#include <stack>
+#include <string>
+
+namespace mg {
+
+typedef std::stack<osg::ref_ptr<ScriptExpression>, std::vector<osg::ref_ptr<ScriptExpression> > > ScriptExpressionStack;
+
+/*
+ * Single instruction of serialized syntax tree of an expression
+ */
+class ScriptInstruction: public osg::Referenced {
+public:
+    ScriptInstruction();
+    virtual ~ScriptInstruction();
+    virtual void execute(ScriptExpressionStack &stack) const;
+    virtual ScriptInstruction *clone() const;
+};
+
+typedef std::vector<osg::ref_ptr<ScriptInstruction> > ScriptInstructions;
+
+/*
+ * This program represents expression syntax tree in Reverse
+ * Polish Notation. The program consists of ScriptInstructions.
+ */
+class ScriptExpressionProgram {
+public:
+    ScriptExpressionProgram();
+    ~ScriptExpressionProgram();
+
+    /* Add instruction to the program */
+    void addInstruction(ScriptInstruction *inst);
+
+    /*
+     * Evaluate program and return newly allocated ScriptExpression.
+     * Result must be freed by the caller.
+     */
+    osg::ref_ptr<ScriptExpression> evaluate() const;
+
+protected:
+    ScriptInstructions m_instructions;
+};
+
+/*
+ * Push constant expression onto the stack.
+ */
+class ScriptConstInstruction: public ScriptInstruction {
+public:
+    ScriptConstInstruction(const Variant &var);
+    virtual void execute(ScriptExpressionStack &stack) const;
+    virtual ScriptInstruction *clone() const;
+
+private:
+    Variant m_var;
+};
+
+/*
+ * Push expression fetching global expression on the
+ * stack.
+ */
+class ScriptGlobInstruction: public ScriptInstruction {
+public:
+    ScriptGlobInstruction(const std::string &name);
+    virtual void execute(ScriptExpressionStack &stack) const;
+    virtual ScriptInstruction *clone() const;
+
+private:
+    std::string m_name;
+};
+
+/*
+ * Push unary expression on the stack.
+ */
+class ScriptUnaryInstruction: public ScriptInstruction {
+public:
+    ScriptUnaryInstruction(ScriptUnaryExpression::Type type);
+    virtual void execute(ScriptExpressionStack &stack) const;
+    virtual ScriptInstruction *clone() const;
+
+private:
+    ScriptUnaryExpression::Type m_type;
+};
+
+/*
+ * Push binary expression on the stack.
+ */
+class ScriptBinaryInstruction: public ScriptInstruction {
+public:
+    ScriptBinaryInstruction(ScriptBinaryExpression::Type type);
+    virtual void execute(ScriptExpressionStack &stack) const;
+    virtual ScriptInstruction *clone() const;
+
+private:
+    ScriptBinaryExpression::Type m_type;
+};
+
+/*
+ * Push ternary expression on the stack.
+ */
+class ScriptTernaryInstruction: public ScriptInstruction {
+public:
+    ScriptTernaryInstruction(ScriptTernaryExpression::Type type);
+    virtual void execute(ScriptExpressionStack &stack) const;
+    virtual ScriptInstruction *clone() const;
+
+private:
+    ScriptTernaryExpression::Type m_type;
+};
+
+} // namespace mg
+
+#endif

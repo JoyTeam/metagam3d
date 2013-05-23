@@ -1,0 +1,28 @@
+#ifndef MG_STACKLESS_THREAD_H
+#define MG_STACKLESS_THREAD_H
+
+#include <OpenThreads/Thread>
+
+namespace osg {
+    class Group;
+}
+
+namespace mg {
+
+class StacklessThread: public OpenThreads::Thread {
+public:
+    StacklessThread(int argc, char *argv[]);
+    virtual ~StacklessThread();
+    virtual void run();
+
+protected:
+    int m_argc;
+    char **m_argv;
+    bool m_initialized;
+
+    void init();
+};
+
+}
+
+#endif

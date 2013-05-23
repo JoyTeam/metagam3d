@@ -1,0 +1,42 @@
+#ifndef MG_OBJECT_VECTOR_HANDLER_H
+#define MG_OBJECT_VECTOR_HANDLER_H
+
+#include <metagam3d/ObjectParamHandler>
+#include <metagam3d/DynamicValue>
+#include <osg/ref_ptr>
+#include <osg/Array>
+
+namespace osg {
+    class Geometry;
+}
+
+namespace mg {
+
+/*
+ * Handler managing single vector. It has parameter
+ * to alter its position.
+ *
+ * Objects of this class should be accessed only from OSG thread.
+ */
+class ObjectVectorHandler: public ObjectParamHandler {
+public:
+    ObjectVectorHandler(Object *object, ParamId param, osg::Vec3Array *vectors,
+        unsigned int index, osg::Geometry *geom = 0);
+    virtual void setParam(ParamId paramid, const DynamicValue &val);
+    virtual void update();
+
+protected:
+    virtual ~ObjectVectorHandler();
+
+    bool m_dirty;
+
+    ParamId m_param;
+    DynamicValue m_value;
+    osg::ref_ptr<osg::Vec3Array> m_vectors;
+    unsigned int m_index;
+    osg::ref_ptr<osg::Geometry> m_geom;
+};
+
+}
+
+#endif

@@ -1,0 +1,93 @@
+#ifndef MG_OBJECT_H
+#define MG_OBJECT_H
+
+#include <metagam3d/types>
+#include <metagam3d/DynamicValue>
+#include <osg/Referenced>
+#include <osg/ref_ptr>
+#include <list>
+
+namespace osg {
+    class Node;
+    class NodeCallback;
+}
+
+namespace mg {
+
+class Engine;
+class ObjectParamHandler;
+
+typedef std::list<osg::ref_ptr<ObjectParamHandler> > ObjectParamHandlers;
+
+/*
+ * Object representing node or group of nodes in the scene graph.
+ * Every object has its own identifier and can be controlled from
+ * the script by means of appropriate ObjectController.
+ *
+ * Objects of this class should be accessed only from OSG thread.
+ */
+class Object: public osg::Referenced {
+public:
+    Object(Engine *engine, ObjectId id, osg::Node *node);
+
+    /* Get object identifier */
+    inline ObjectId id() const;
+
+    /* Get controlled node */
+    inline osg::Node *node();
+
+    /* Get engine reference */
+    inline Engine *engine();
+
+    /* Set object parameter. Actually it only notifies all
+     * parameter handlers about it. */
+    void setParam(ParamId paramid, const DynamicValue &val);
+
+    /* Add parameter handler */
+    void addParamHandler(ObjectParamHandler *handler);
+
+    /* Update all parameters */
+    void update();
+
+    /* Destroy object (essentially delete updaters and param
+     * handlers. Reference counting system destroys the object
+     * automatically. */
+    void destroy();
+
+protected:
+    virtual ~Object();
+
+    /* Reference to the game engine */
+    Engine *m_engine;
+
+    /* Object identifier */
+    ObjectId m_id;
+
+    /* Controlled node */
+    osg::ref_ptr<osg::Node> m_node;
+
+    /* Parameter handlers */
+    ObjectParamHandlers m_handlers;
+
+    /* Called on every frame */
+    osg::ref_ptr<osg::NodeCallback> m_updater;
+};
+
+inline ObjectId Object::id() const
+{
+    return m_id;
+}
+
+inline osg::Node *Object::node()
+{
+    return m_node;
+}
+
+inline Engine *Object::engine()
+{
+    return m_engine;
+}
+
+}
+
+#endif

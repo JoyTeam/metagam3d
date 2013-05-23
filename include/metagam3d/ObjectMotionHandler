@@ -1,0 +1,45 @@
+#ifndef MG_OBJECT_MOTION_HANDLER_H
+#define MG_OBJECT_MOTION_HANDLER_H
+
+#include <metagam3d/ObjectParamHandler>
+#include <metagam3d/DynamicValue>
+#include <osg/ref_ptr>
+
+namespace osg {
+    class MatrixTransform;
+}
+
+namespace mg {
+
+/*
+ * Handler managing osg::MatrixTransform node. It has parameters
+ * to alter translation, rotation and scale of the transform.
+ *
+ * Objects of this class should be accessed only from OSG thread.
+ */
+class ObjectMotionHandler: public ObjectParamHandler {
+public:
+    ObjectMotionHandler(Object *object, ParamId translateParam, ParamId rotateParam,
+        ParamId scaleParam, osg::MatrixTransform *trans);
+    virtual void setParam(ParamId paramid, const DynamicValue &val);
+    virtual void update();
+
+protected:
+    virtual ~ObjectMotionHandler();
+
+    bool m_dirty;
+
+    osg::ref_ptr<osg::MatrixTransform> m_trans;
+
+    ParamId m_translateParam;
+    ParamId m_rotateParam;
+    ParamId m_scaleParam;
+
+    DynamicValue m_translate;
+    DynamicValue m_rotate;
+    DynamicValue m_scale;
+};
+
+}
+
+#endif

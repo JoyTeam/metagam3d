@@ -1,0 +1,44 @@
+#ifndef MG_STACKLESS_OBJECT_PARAM_H
+#define MG_STACKLESS_OBJECT_PARAM_H
+
+#include <metagam3d/types>
+#include <metagam3d/DynamicValue>
+
+namespace mg {
+
+/*
+ * StacklessObject is the Stackless-side representation of
+ * an ObjectParam. It provides interface to sending requests to the
+ * object parameter and receiving responses from it.
+ */
+class StacklessObjectParam {
+public:
+    StacklessObjectParam(ObjectId objid, ParamId paramid);
+    ~StacklessObjectParam();
+
+    /* Get object identifier */
+    ObjectId objid() const;
+
+    /* Get parameter identifier */
+    ParamId paramid() const;
+
+    /* Send command to the OSG thread to set the parameter value */
+    void setValue(const DynamicValue &val);
+
+    /* Get parameter value at the moment */
+    Variant getValue(double) const;
+
+protected:
+    /* Object identifier */
+    ObjectId m_objid;
+
+    /* Parameter identifier */
+    ParamId m_paramid;
+
+    /* Current value */
+    DynamicValue m_value;
+};
+
+} // namespace mg
+
+#endif

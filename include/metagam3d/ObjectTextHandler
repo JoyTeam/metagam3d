@@ -1,0 +1,44 @@
+#ifndef MG_OBJECT_TEXT_HANDLER_H
+#define MG_OBJECT_TEXT_HANDLER_H
+
+#include <metagam3d/ObjectParamHandler>
+#include <metagam3d/DynamicValue>
+
+namespace osgText {
+    class Text;
+}
+
+namespace mg {
+
+/*
+ * Object handler managing osgText::Text object. It provides parameters for
+ * specifying text to show and its color and size.
+ *
+ * Objects of this class should be accessed only from OSG thread.
+ */
+class ObjectTextHandler: public ObjectParamHandler {
+public:
+    ObjectTextHandler(Object *object, ParamId textParam, ParamId sizeParam,
+            ParamId colorParam, osgText::Text *text);
+    virtual void setParam(ParamId paramid, const DynamicValue &val);
+    virtual void update();
+
+protected:
+    virtual ~ObjectTextHandler();
+
+    bool m_dirty;
+
+    ParamId m_textParam;
+    ParamId m_sizeParam;
+    ParamId m_colorParam;
+
+    osg::ref_ptr<osgText::Text> m_text;
+
+    DynamicValue m_textVal;
+    DynamicValue m_sizeVal;
+    DynamicValue m_colorVal;
+};
+
+}
+
+#endif

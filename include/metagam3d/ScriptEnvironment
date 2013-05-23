@@ -1,0 +1,26 @@
+#ifndef MG_SCRIPT_ENVIRONMENT_H
+#define MG_SCRIPT_ENVIRONMENT_H
+
+#include <metagam3d/Variant>
+#include <map>
+#include <string>
+
+namespace mg {
+
+class ScriptEnvironment {
+public:
+    ScriptEnvironment();
+
+    /* Set global variable */
+    void setGlobal(const std::string &name, const Variant &val);
+
+    /* Get global variable */
+    const Variant &getGlobal(const std::string &name) const;
+
+protected:
+    std::map<std::string, Variant> m_globals;
+};
+
+} // namespace mg
+
+#endif

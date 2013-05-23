@@ -1,0 +1,33 @@
+#ifndef MG_STACKLESS_CHANNEL_VALUE_H
+#define MG_STACKLESS_CHANNEL_VALUE_H
+
+#include <boost/python.hpp>
+
+namespace mg {
+
+/* Value sent to the python side */
+class StacklessChannelValue {
+public:
+    StacklessChannelValue();
+    StacklessChannelValue(long val);
+    StacklessChannelValue(const StacklessChannelValue &v);
+
+    enum ValueType {
+        NONE,
+        LONG
+    };
+
+    /* Generate python object. It's safe to call
+     * this method only in python thread */
+    boost::python::object getPythonObject() const;
+
+    StacklessChannelValue &operator=(const StacklessChannelValue &v);
+
+private:
+    ValueType m_type;
+    int m_long_val;
+};
+
+} // namespace mg
+
+#endif

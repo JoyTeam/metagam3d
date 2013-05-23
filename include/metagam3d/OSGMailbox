@@ -1,0 +1,50 @@
+#ifndef MG_OSG_MAILBOX_H
+#define MG_OSG_MAILBOX_H
+
+#include <OpenThreads/Mutex>
+#include <list>
+
+namespace osgViewer {
+    class Viewer;
+}
+
+namespace mg {
+
+class Engine;
+class OSGMessage;
+
+/*
+ * Mailbox for message to the OSG thread.
+ */
+class OSGMailbox {
+public:
+    /* Register queue processor in the viewer main loop */
+    void reg(osgViewer::Viewer *viewer);
+
+    /* Send the message to OSG thread */
+    void send(OSGMessage *msg);
+
+    /* Process messages queue */
+    void process();
+
+    /* Notify OSG mailbox about running engine */
+    void setEngine(Engine *engine);
+
+    /* Get singleton instance */
+    static OSGMailbox *instance();
+
+private:
+    OSGMailbox();
+    ~OSGMailbox();
+
+    /* Queue */
+    OpenThreads::Mutex mutex;
+    std::list<OSGMessage*> queue;
+
+    /* Reference to the engine */
+    Engine *m_engine;
+};
+
+}
+
+#endif

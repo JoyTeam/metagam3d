@@ -1,0 +1,43 @@
+#ifndef MG_CONSOLE_OBJECT_H
+#define MG_CONSOLE_OBJECT_H
+
+#include <metagam3d/Object>
+#include <osg/Vec3d>
+#include <osg/Vec4>
+#include <vector>
+#include <list>
+#include <string>
+
+namespace mg {
+
+class OSGConsole;
+
+/*
+ * Object managing OSGConsole object. It provides interface for
+ * appending text lines and specifying color of the characters.
+ *
+ * Objects of this class should be accessed only from OSG thread.
+ */
+class ConsoleObject: public Object {
+public:
+    ConsoleObject(Engine *engine, ObjectId id, osg::Node *node, OSGConsole *console);
+
+    class LineElement {
+    public:
+        LineElement(const osg::Vec3d &_color, const std::string &_str);
+        osg::Vec4 color;
+        std::string str;
+    };
+
+    typedef std::list<LineElement> Line;
+
+    void print(const Line &line);
+
+protected:
+    virtual ~ConsoleObject();
+    osg::ref_ptr<OSGConsole> m_console;
+};
+
+}
+
+#endif

@@ -1,0 +1,65 @@
+#ifndef MG_DYNAMIC_VALUE_H
+#define MG_DYNAMIC_VALUE_H
+
+#include <metagam3d/Variant>
+#include <metagam3d/ScriptExpression>
+#include <osg/ref_ptr>
+
+namespace mg {
+
+class Variant;
+class ScriptExpressionProgram;
+
+/*
+ * DynamicValue represents a parameter changing with time
+ */
+class DynamicValue {
+public:
+    DynamicValue();
+    DynamicValue(const Variant &value);
+    DynamicValue(ScriptExpression *expr);
+    DynamicValue(const ScriptExpressionProgram &prog);
+    ~DynamicValue();
+
+    /* Get value at given time */
+    void evaluate(double t, Variant &output) const;
+
+    /* Get value at given time and forget dynamic value
+     * if requested time is greater or equal than "till". */
+    void evaluateAndForget(double t, Variant &output);
+
+    /* Set time value until dynamic expression is defined.
+     * After this time expression will be evaluated with
+     * t=till */
+    void setTill(double till);
+
+    /* Forget dynamic expression if "till" is defined and
+     * provided time is greater or equal than "till".
+     * In this case dynamic expression is forgotten, and
+     * static value remains forever. */
+    void forget(double before);
+
+    /* Return true if DynamicValue contains scripted
+     * expression */
+    inline bool dynamic() const;
+
+protected:
+    bool m_dynamic;
+    bool m_tillDefined;
+    double m_till;
+
+    /* Static value */
+    Variant m_staticValue;
+
+    /* Scripting expression */
+    osg::ref_ptr<ScriptExpression> m_expr;
+};
+
+inline bool DynamicValue::dynamic() const
+{
+    return m_dynamic;
+}
+
+}
+
+#endif

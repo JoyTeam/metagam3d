@@ -1,0 +1,37 @@
+#ifndef MG_OBJECT_PARAM_HANDLER_H
+#define MG_OBJECT_PARAM_HANDLER_H
+
+#include <metagam3d/types>
+#include <osg/Referenced>
+#include <osg/ref_ptr>
+
+namespace mg {
+
+class DynamicValue;
+class Object;
+class Engine;
+
+/*
+ * Parameter handler responds to parameter change events and
+ * updates the node accordingly.
+ */
+class ObjectParamHandler: public osg::Referenced {
+public:
+    ObjectParamHandler(Object *object);
+
+    /* Object parameter changed */
+    virtual void setParam(ParamId paramid, const DynamicValue &val) = 0;
+
+    /* Perform any desired updates of the object (basically called on every frame) */
+    virtual void update() = 0;
+
+protected:
+    osg::ref_ptr<Object> m_object;
+    Engine *m_engine;
+
+    virtual ~ObjectParamHandler();
+};
+
+}
+
+#endif

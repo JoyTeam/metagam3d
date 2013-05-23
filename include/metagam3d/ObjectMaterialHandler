@@ -1,0 +1,49 @@
+#ifndef MG_OBJECT_MATERIAL_HANDLER_H
+#define MG_OBJECT_MATERIAL_HANDLER_H
+
+#include <metagam3d/ObjectParamHandler>
+#include <metagam3d/DynamicValue>
+
+namespace osg {
+    class Material;
+}
+
+namespace mg {
+
+/*
+ * Object handler managing osg::Material object. It provides parameters for
+ * changing ambient, diffuse, specular, emission colours and shininess.
+ *
+ * Objects of this class should be accessed only from OSG thread.
+ */
+class ObjectMaterialHandler: public ObjectParamHandler {
+public:
+    ObjectMaterialHandler(Object *object, ParamId ambientParam, 
+        ParamId diffuseParam, ParamId specularParam, ParamId emissionParam,
+        ParamId shininessParam, osg::Material *material);
+    virtual void setParam(ParamId paramid, const DynamicValue &val);
+    virtual void update();
+
+protected:
+    virtual ~ObjectMaterialHandler();
+
+    bool m_dirty;
+
+    ParamId m_ambientParam;
+    ParamId m_diffuseParam;
+    ParamId m_specularParam;
+    ParamId m_emissionParam;
+    ParamId m_shininessParam;
+
+    osg::ref_ptr<osg::Material> m_material;
+
+    DynamicValue m_ambient;
+    DynamicValue m_diffuse;
+    DynamicValue m_specular;
+    DynamicValue m_emission;
+    DynamicValue m_shininess;
+};
+
+}
+
+#endif

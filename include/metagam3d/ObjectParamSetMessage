@@ -1,0 +1,36 @@
+#ifndef MG_OBJECT_PARAM_SET_MESSAGE_H
+#define MG_OBJECT_PARAM_SET_MESSAGE_H
+
+#include <metagam3d/types>
+#include <metagam3d/DynamicValue>
+#include <metagam3d/OSGMessage>
+#include <map>
+
+namespace mg {
+
+/*
+ * This message is sent to OSG thread to change values of
+ * object parameters.
+ */
+class ObjectParamSetMessage: public OSGMessage {
+public:
+    typedef std::map<ParamId, DynamicValue> Values;
+    ObjectParamSetMessage(ObjectId objid);
+
+    /* Add parameter value */
+    void addParam(ParamId paramid, const DynamicValue &val);
+
+protected:
+    virtual ~ObjectParamSetMessage();
+    virtual void deliver(Engine *engine);
+
+    /* Object identifier */
+    ObjectId m_objid;
+
+    /* Values to set */
+    Values m_values;
+};
+
+}
+
+#endif

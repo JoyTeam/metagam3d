@@ -1,0 +1,56 @@
+#ifndef MG_STACKLESS_CHANNEL_H
+#define MG_STACKLESS_CHANNEL_H
+
+#include <metagam3d/StacklessChannelValue>
+#include <boost/python.hpp>
+
+namespace mg {
+
+/*
+ * This is a link to a channel created in Stackless script.
+ * Objects of this class must be created and destroyed only in
+ * the stackless thread, although they can be passed as pointers
+ * to other threads. Signalling with signal() method can be
+ * performed from any other thread. It results in sending the
+ * appropriate message to the python thread and sending the value
+ * to the channel.
+ *
+ * signal() must be called once and only once for every instance of
+ * StacklessChannel.
+ */
+class StacklessChannel {
+    friend class StacklessChannelMessage;
+public:
+    /* Create channel object. Pass concurrence
+     * Channel() object from the python side.
+     * It's safe to create instance of this class
+     * only in python thread. */
+    StacklessChannel(boost::python::object channel);
+
+    /* Send a signal to the python side.
+     * It's safe to call this method from any
+     * thread. It's allowed to signal the
+     * channel only once. Further attempts are ignored.
+     * Channel object is destroyed automatically
+     * after delivery. */
+    void signal();
+    void signal(const StacklessChannelValue &val);
+
+protected:
+    boost::python::object m_channel;
+    StacklessChannelValue m_value;
+
+    /* If the channel was already signalled */
+    bool m_sent;
+
+    /* Send a message to the stackless side */
+    void send();
+
+    /* Delivers value to the channel */
+    void deliver();
+    ~StacklessChannel();
+};
+
+} // namespace mg
+
+#endif

@@ -1,0 +1,44 @@
+#ifndef MG_OSG_CONSOLE_H
+#define MG_OSG_CONSOLE_H
+
+#include <metagam3d/ConsoleObject>
+#include <osg/Group>
+#include <osg/ref_ptr>
+#include <osg/Vec3>
+#include <list>
+
+namespace osg {
+    class Geode;
+}
+
+namespace osgText {
+    class Font;
+}
+
+namespace mg {
+
+class OSGConsole: public osg::Group {
+public:
+    OSGConsole(size_t cols, size_t rows, double fontSize);
+
+    /* Output line to the console */
+    void print(const ConsoleObject::Line &line);
+
+protected:
+    virtual ~OSGConsole();
+    typedef std::list<osg::ref_ptr<osg::Geode> > Lines;
+
+    size_t m_maxCols;
+    size_t m_maxRows;
+    size_t m_rows;
+    double m_fontSize;
+    float m_charWidth;
+    float m_charHeight;
+    Lines m_lines;
+    osg::Vec3 m_cursor;
+    osg::ref_ptr<osgText::Font> m_font;
+};
+
+} // namespace mg
+
+#endif

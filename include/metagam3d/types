@@ -1,0 +1,16 @@
+#ifndef MG_TYPES_H
+#define MG_TYPES_H
+
+namespace mg {
+
+typedef unsigned long ObjectId;
+typedef unsigned char ParamId;
+
+const ObjectId OBJECT_ID_AUTOLOAD = 0x10000000;
+const ObjectId OBJECT_ID_TEXT = 0x20000000;
+const ObjectId OBJECT_ID_CONSOLE = 0x30000000;
+const ObjectId OBJECT_ID_LINES = 0x40000000;
+
+}
+
+#endif
