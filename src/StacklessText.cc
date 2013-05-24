@@ -51,6 +51,9 @@ public:
         osg::Geode *geode = new osg::Geode();
         geode->addDrawable(text);
 
+        osg::StateSet *stateset = geode->getOrCreateStateSet();
+        stateset->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
+
         /* Create transformation matrix */
         osg::MatrixTransform *trans = new osg::MatrixTransform();
         trans->addChild(geode);

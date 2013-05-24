@@ -56,6 +56,7 @@ OSGConsole::OSGConsole(size_t cols, size_t rows, double fontSize):
     geom->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::QUADS, 0, 4));
     osg::StateSet *stateset = geom->getOrCreateStateSet();
     stateset->setMode(GL_BLEND, osg::StateAttribute::ON);
+    stateset->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
     background->addDrawable(geom);
     addChild(background);
 
@@ -169,6 +170,9 @@ void OSGConsole::print(const ConsoleObject::Line &line)
             break;
         ++it;
     }
+    /* Disable lighting for the text */
+    osg::StateSet *stateset = geode->getOrCreateStateSet();
+    stateset->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
     /* Add line to the scene */
     addChild(geode);
     m_lines.push_back(geode);
