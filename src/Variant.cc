@@ -31,7 +31,8 @@ void export_variant()
         def(self > self).
         def(self >= self).
         def(self % self).
-        add_property("type", &Variant::type);
+        add_property("type", &Variant::type).
+        def("vec3dValue", &Variant::vec3dValue);
 
     enum_<Variant::Type>("VariantType");
     scope().attr("NONE") = Variant::NONE;

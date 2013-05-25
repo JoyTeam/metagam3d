@@ -4,3 +4,4 @@ bin
 cmake_install.cmake
 lib
 Makefile
+*.pyc
