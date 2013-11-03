@@ -30,7 +30,7 @@ public:
 
     class MaterialSetterVisitor: public osg::NodeVisitor {
     public:
-        MaterialSetterVisitor(Object *object, ParamId ambient, ParamId diffuse,
+        MaterialSetterVisitor(mg::Object *object, ParamId ambient, ParamId diffuse,
                 ParamId specular, ParamId emission, ParamId shininess,
                 const std::string &materialName):
             osg::NodeVisitor(TRAVERSE_ALL_CHILDREN),
@@ -67,7 +67,7 @@ public:
         }
 
     protected:
-        Object *m_object;
+        mg::Object *m_object;
         ParamId m_ambient;
         ParamId m_diffuse;
         ParamId m_specular;
